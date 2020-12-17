@@ -20,7 +20,7 @@ struct CovidManager {
     
     
     func fetchCovidStatisticsByCountryName(countryName: String){
-        let url = "\(baseUrl)\(countryName)"
+        let url = "\(baseUrl)\(countryName)".replacingOccurrences(of: " ", with: "%20")
         makeRequest(url: url)
     }
     
