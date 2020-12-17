@@ -26,7 +26,6 @@ class ViewController: UIViewController {
 
     @IBAction func searchButton(_ sender: UIButton) {
         if cityTextField.text != "" {
-            print(cityTextField.text!)
             covidManagerObj.fetchCovidStatisticsByCountryName(countryName: cityTextField.text!)
             return
         }
@@ -44,6 +43,7 @@ extension ViewController: CovidManagerDelegate {
             self.casesLabel.text = String(result["cases"] as! Int)
             self.deathsLabel.text = String(result["deaths"] as! Int)
             self.recoveredLabel.text = String(result["recovered"] as! Int)
+            self.flagImageView.myLoadFromURL(urlString: result["flagImageUrl"] as! String)
         }
     }
     
@@ -59,5 +59,21 @@ extension ViewController: CovidManagerDelegate {
         deathsLabel.text = ""
         recoveredLabel.text = ""
         flagImageView.image = nil
+    }
+}
+
+extension UIImageView {
+    func myLoadFromURL(urlString: String) {
+        guard let url = URL(string: urlString) else {return}
+
+        DispatchQueue.global().async { [weak self] in
+            if let data = try? Data(contentsOf: url) {
+                if let image = UIImage(data: data) {
+                    DispatchQueue.main.async {
+                        self?.image = image
+                    }
+                }
+            }
+        }
     }
 }
